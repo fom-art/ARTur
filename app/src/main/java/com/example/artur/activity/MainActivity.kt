@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import com.example.artur.R
 import com.example.artur.databinding.ActivityMainBinding
 
@@ -18,19 +19,35 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        setBasicBrushSettings()
     }
 
-    fun paintClicked(view: View) {
+    private fun setBasicBrushSettings() {
+        //Set the first element of llPaintColors as the chosen one
+        mImageButtonCurrentPaint = binding.llPaintColors[0] as ImageButton
+    }
+
+    fun changePaintClicked(view: View) {
         if (view !== mImageButtonCurrentPaint) {
             val imageButton = view as ImageButton
 
-            imageButton.setImageDrawable(
-                ContextCompat.getDrawable(this, R.drawable.pallet_pressed)
-            )
-            mImageButtonCurrentPaint!!.setImageDrawable(
-                ContextCompat.getDrawable(this, R.drawable.pallet_normal)
-            )
+            setColorButtonClicked(imageButton)
+            mImageButtonCurrentPaint?.let { setColorButtonUnClicked(it) }
+
             mImageButtonCurrentPaint = view
         }
+    }
+
+    private fun setColorButtonClicked(imageButton: ImageButton) {
+        imageButton.setImageDrawable(
+            ContextCompat.getDrawable(this, R.drawable.pallet_pressed)
+        )
+    }
+
+    private fun setColorButtonUnClicked(imageButton: ImageButton) {
+        imageButton.setImageDrawable(
+            ContextCompat.getDrawable(this, R.drawable.pallet_normal)
+        )
     }
 }

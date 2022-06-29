@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ARTur</string>
+    <string name="background_image">Background image</string>
+    <string name="color_pallet">color_pallet</string>
+    <string name="upload_a_galley_image">Upload a galley image</string>
+    <string name="undo">Undo</string>
+    <string name="brush_size">Brush size</string>
+    <string name="save_your_image">Save your image</string>
 </resources>

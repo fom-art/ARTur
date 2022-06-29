@@ -12,7 +12,7 @@ import com.example.artur.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
-    private var mImageButtonCurrentPaint: ImageButton? = null
+    private var currentColorImageButtonSelected: ImageButton? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -24,18 +24,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setBasicBrushSettings() {
-        //Set the first element of llPaintColors as the chosen one
-        mImageButtonCurrentPaint = binding.llPaintColors[0] as ImageButton
+        //Set the first element of llPaintColors as the basic one
+        val basicColorImageButton = binding.llPaintColors[0] as ImageButton
+
+        //Make a selection of the basic color
+        changePaintClicked(basicColorImageButton)
+
+        currentColorImageButtonSelected = basicColorImageButton
     }
 
     fun changePaintClicked(view: View) {
-        if (view !== mImageButtonCurrentPaint) {
+        if (view !== currentColorImageButtonSelected) {
             val imageButton = view as ImageButton
 
             setColorButtonClicked(imageButton)
-            mImageButtonCurrentPaint?.let { setColorButtonUnClicked(it) }
+            currentColorImageButtonSelected?.let { setColorButtonUnClicked(it) }
 
-            mImageButtonCurrentPaint = view
+            currentColorImageButtonSelected = view
         }
     }
 

@@ -1,14 +1,18 @@
 package com.example.artur.activity
 
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 import com.example.artur.DrawingView
 import com.example.artur.R
 import com.example.artur.databinding.ActivityMainBinding
+import com.example.artur.utils.Constants
+import com.example.artur.utils.Permissions
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -53,11 +57,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initiateChoosingPhotoFromGallery() {
-        //TODO
+        if (Permissions(this, this).checkPermissions()) {
+
+        }
     }
 
     private fun saveBitmapToStorage() {
-        //TODO
+        if (Permissions(this, this).checkPermissions()) {
+
+        }
     }
 
     private fun setBasicBrushSettings() {
@@ -93,5 +101,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         )
     }
 
-
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == Constants.READ_AND_WRITE_PERMISSIONS_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission was granted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Oops! You have just declined the permission! \n" +
+                            "To allow it now, you need to allow the permission in settings of your phone...",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
 }

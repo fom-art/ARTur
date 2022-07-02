@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import kotlin.properties.Delegates
@@ -12,9 +13,6 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
 
     // An inner class for custom path with two params as color and stroke size.
     internal inner class CustomPath(var color: Int, var brushThickness: Float) : Path()
-
-    //TODO finish making the DrawingView
-    //TODO make a commit, stating, that this class was done
 
     private var drawPath: CustomPath? = null
     private var canvasBitmap: Bitmap? = null
@@ -41,6 +39,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
     }
 
     private fun setUpPaintClassVariables() {
+        drawPaint = Paint()
         drawPaint!!.color = brushColor
         drawPaint!!.style = Paint.Style.STROKE
         drawPaint!!.strokeJoin = Paint.Join.MITER

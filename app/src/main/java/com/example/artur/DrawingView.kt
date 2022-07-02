@@ -84,7 +84,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
         val touchX = event.x
         val touchY = event.y
 
-        when(event.action) {
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 beginTheLine(touchX, touchY)
             }
@@ -92,6 +92,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
                 addLine(touchX, touchY)
             }
             MotionEvent.ACTION_UP -> {
+                pathsList.add(drawPath!!)
                 drawPath = CustomPath(brushColor, brushSize)
             }
             else -> return false
@@ -112,7 +113,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
         brushSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             newSize, resources.displayMetrics
-        )
+        )    //Converts an unpacked complex data value holding a dimension to its final floating point value.
         drawPaint!!.strokeWidth = brushSize
     }
 
@@ -131,7 +132,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
 
     //Adds a line to the specified point
     private fun addLine(cordX: Float, cordY: Float) {
-        drawPath!!.moveTo(cordX, cordY)
+        drawPath!!.lineTo(cordX, cordY)
     }
 
     private fun setupBasicBrush() {

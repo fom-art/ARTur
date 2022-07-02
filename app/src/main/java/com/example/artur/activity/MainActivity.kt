@@ -1,5 +1,6 @@
 package com.example.artur.activity
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun initiateChoosingPhotoFromGallery() {
         if (Permissions(this, this).checkPermissions()) {
-
+            startGalleryIntent()
         }
     }
 

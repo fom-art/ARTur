@@ -2,8 +2,10 @@ package com.example.artur.activity
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Layout
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
@@ -12,6 +14,8 @@ import androidx.core.view.get
 import com.example.artur.DrawingView
 import com.example.artur.R
 import com.example.artur.databinding.ActivityMainBinding
+import com.example.artur.dialogs.BrushDialog
+import com.example.artur.utils.BitmapFromGalleryGetter
 import com.example.artur.utils.Constants
 import com.example.artur.utils.Permissions
 
@@ -19,11 +23,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityMainBinding
     private var currentColorImageButtonSelected: ImageButton? = null
+    private lateinit var bitmapFromGalleryGetter: BitmapFromGalleryGetter
 
     //TODO finish MainActivity functionality
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
+        bitmapFromGalleryGetter = BitmapFromGalleryGetter(this, binding)
 
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -54,18 +60,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun showChangeBrushSizeDialog() {
-        //TODO
+        BrushDialog(this, binding).createBrushDialog()
     }
 
     private fun initiateChoosingPhotoFromGallery() {
         if (Permissions(this, this).checkPermissions()) {
-            startGalleryIntent()
+            bitmapFromGalleryGetter.getPhotoFromGallery()
         }
     }
 
     private fun saveBitmapToStorage() {
         if (Permissions(this, this).checkPermissions()) {
-
+            //TODO
         }
     }
 

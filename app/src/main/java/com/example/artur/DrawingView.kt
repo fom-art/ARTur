@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import kotlin.properties.Delegates
@@ -105,6 +106,14 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
             undoPathsList.add(pathsList.removeAt(pathsList.size - 1))
             invalidate()    //Used to notify the ViewModel, that the data (paths) has changed
         }
+    }
+
+    fun setSizeForBrush(newSize: Float) {
+        brushSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            newSize, resources.displayMetrics
+        )
+        drawPaint!!.strokeWidth = brushSize
     }
 
     private fun beginTheLine(cordX: Float, cordY: Float) {

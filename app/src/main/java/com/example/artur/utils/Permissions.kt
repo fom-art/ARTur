@@ -14,8 +14,8 @@ class Permissions(
     private val activity: Activity
 ) {
 
-    fun checkPermissions(): Boolean {
 
+    fun checkPermissions(): Boolean {
         return if (arePermissionsGranted()) {
             true
         } else {

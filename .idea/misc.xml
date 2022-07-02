@@ -4,8 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AndroidApplications/MyOwnProjects/ARTur/app/src/main/res/drawable-v24/background_drawing_view_layout.xml" value="0.1445" />
+        <entry key="..\:/AndroidApplications/MyOwnProjects/ARTur/app/src/main/res/drawable-v24/large.xml" value="0.1445" />
         <entry key="..\:/AndroidApplications/MyOwnProjects/ARTur/app/src/main/res/drawable-v24/pallet_normal.xml" value="0.1445" />
+        <entry key="..\:/AndroidApplications/MyOwnProjects/ARTur/app/src/main/res/drawable-v24/small.xml" value="0.1445" />
         <entry key="..\:/AndroidApplications/MyOwnProjects/ARTur/app/src/main/res/layout/activity_main.xml" value="0.16799999999999998" />
+        <entry key="..\:/AndroidApplications/MyOwnProjects/ARTur/app/src/main/res/layout/dialog_brush_size.xml" value="0.21927083333333333" />
       </map>
     </option>
   </component>

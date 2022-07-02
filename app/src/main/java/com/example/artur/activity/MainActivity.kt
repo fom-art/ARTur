@@ -89,11 +89,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (view !== currentColorImageButtonSelected) {
             val imageButton = view as ImageButton
 
+            setBrushColor(imageButton)
+
             setColorButtonClicked(imageButton)
             currentColorImageButtonSelected?.let { setColorButtonUnClicked(it) }
 
             currentColorImageButtonSelected = view
         }
+    }
+
+    private fun setBrushColor(imageButton: ImageButton) {
+        val colorTag = imageButton.tag.toString()
+        binding.drawingView.setBrushColor(colorTag)
     }
 
     private fun setColorButtonClicked(imageButton: ImageButton) {

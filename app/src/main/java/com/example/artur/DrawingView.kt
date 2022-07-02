@@ -116,6 +116,11 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
         drawPaint!!.strokeWidth = brushSize
     }
 
+    fun setBrushColor(newColor: String) {
+        brushColor = Color.parseColor(newColor)
+        drawPaint!!.color = brushColor
+    }
+
     private fun beginTheLine(cordX: Float, cordY: Float) {
         drawPath!!.color = brushColor
         drawPath!!.brushThickness = brushSize

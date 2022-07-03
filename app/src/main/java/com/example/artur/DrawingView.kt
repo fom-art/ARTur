@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
@@ -17,6 +16,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
 
     private var drawPath: CustomPath? = null
     private var canvasBitmap: Bitmap? = null
+    private var viewBitmap: Bitmap? = null
     private var drawPaint: Paint? = null
     private var canvasPaint: Paint? = null
     private var brushSize by Delegates.notNull<Float>()     //lateinit Float variable
@@ -24,12 +24,17 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
     private var canvas: Canvas? = null    //Canvas class holds the draw calls to write the bitmap
     private val pathsList = ArrayList<CustomPath>()
     private val undoPathsList = ArrayList<CustomPath>()
+    private val actionList = ArrayList<Bitmap>()
+    private var currentX by Delegates.notNull<Float>()
+    private var currentY by Delegates.notNull<Float>()
 
     init {
         setUpDrawingView()
     }
 
     private fun setUpDrawingView() {
+        drawPaint = Paint()
+
         setupBasicBrush()
 
         //Set up paths storage
@@ -40,7 +45,6 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
     }
 
     private fun setUpPaintClassVariables() {
-        drawPaint = Paint()
         drawPaint!!.color = brushColor
         drawPaint!!.style = Paint.Style.STROKE
         drawPaint!!.strokeJoin = Paint.Join.MITER
@@ -58,25 +62,16 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
     ) {
         super.onSizeChanged(currentWidth, currentHeight, oldWidth, oldHeight)
         canvasBitmap = Bitmap.createBitmap(currentWidth, currentHeight, Bitmap.Config.ARGB_8888)
+        viewBitmap = Bitmap.createBitmap(currentWidth, currentHeight, Bitmap.Config.ARGB_8888)
         canvas = Canvas(canvasBitmap!!)
     }
 
     //Function is being called, when the stroke is drawn
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawBitmap(canvasBitmap!!, 0f, 0f, canvasPaint)
 
-        for(path in pathsList) {
-            drawPaint!!.strokeWidth = path.brushThickness
-            drawPaint!!.color = path.color
-            canvas.drawPath(path, drawPaint!!)
-        }
-
-        if(drawPath!!.isEmpty) {
-            drawPaint!!.strokeWidth = drawPath!!.brushThickness
-            drawPaint!!.color = drawPath!!.color
-            canvas.drawPath(drawPath!!, drawPaint!!)
-        }
+        canvas.drawBitmap(canvasBitmap!!, 0f, 0f, null)
+        canvas.drawBitmap(viewBitmap!!, 0f, 0f, null)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -90,6 +85,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
             }
             MotionEvent.ACTION_MOVE -> {
                 addLine(touchX, touchY)
+                invalidate()
             }
             MotionEvent.ACTION_UP -> {
                 pathsList.add(drawPath!!)
@@ -100,6 +96,21 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
 
         invalidate()    //Used to notify the ViewModel, that the data (paths) has changed
         return true
+    }
+
+    fun undoOneAction() {
+        if (actionList.size > 0) {
+            actionList.removeAt(actionList.size - 1)
+            if (actionList.size > 0) {
+                viewBitmap = actionList.get(actionList.size - 1)
+            } else {
+                viewBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            }
+
+            canvas = Canvas(viewBitmap!!)
+
+            invalidate()
+        }
     }
 
     fun undoOneStep() {
@@ -123,20 +134,23 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
     }
 
     private fun beginTheLine(cordX: Float, cordY: Float) {
-        drawPath!!.color = brushColor
-        drawPath!!.brushThickness = brushSize
-
-        drawPath!!.reset()    //Clear a previous path from the path variable
+//        drawPath!!.color = brushColor
+//        drawPath!!.brushThickness = brushSize
+//
+//        drawPath!!.reset()    //Clear a previous path from the path variable
         drawPath!!.moveTo(cordX, cordY)    //Set the beginning of the upcoming line
+        currentX = cordX
+        currentY = cordY
     }
 
     //Adds a line to the specified point
     private fun addLine(cordX: Float, cordY: Float) {
         drawPath!!.lineTo(cordX, cordY)
+        canvas!!.drawPath(drawPath!!, drawPaint!!)
     }
 
     private fun setupBasicBrush() {
         brushColor = Color.BLACK
-        brushSize = 20.toFloat()
+        setSizeForBrush(20.toFloat())
     }
 }

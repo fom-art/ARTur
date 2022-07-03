@@ -1,17 +1,15 @@
 package com.example.artur.activity
 
-import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Layout
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
-import com.example.artur.DrawingView
 import com.example.artur.R
 import com.example.artur.databinding.ActivityMainBinding
 import com.example.artur.dialogs.BrushDialog
@@ -34,6 +32,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        turnOffDarkMode()
+
         setBasicBrushSettings()
 
         binding.ibBrush.setOnClickListener(this)
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 initiateChoosingPhotoFromGallery()
             }
             R.id.ib_undo -> {
-                binding.drawingView.undoOneStep()
+                binding.drawingView.undoOneAction()
             }
             R.id.ib_save -> {
                 saveBitmapToStorage()
@@ -89,12 +89,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (view !== currentColorImageButtonSelected) {
             val imageButton = view as ImageButton
 
-            setBrushColor(imageButton)
+            currentColorImageButtonSelected = if (imageButton.tag.toString() != Constants.ERASER){
+                setBrushColor(imageButton)
 
-            setColorButtonClicked(imageButton)
-            currentColorImageButtonSelected?.let { setColorButtonUnClicked(it) }
+                setColorButtonClicked(imageButton)
 
-            currentColorImageButtonSelected = view
+                view
+            } else {
+                binding.drawingView.activateEraser()
+                setColorButtonClicked(imageButton)
+                setColorButtonClicked(currentColorImageButtonSelected!!)
+
+                view
+            }
         }
     }
 
@@ -133,5 +140,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 ).show()
             }
         }
+    }
+
+    private fun turnOffDarkMode() {
+        val appSettingPrefs: SharedPreferences = getSharedPreferences("AppSettingPrefs", 0)
+        val sharedPreferencesEditor: SharedPreferences.Editor = appSettingPrefs.edit()
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        sharedPreferencesEditor.putBoolean("NightMode", true)
+        sharedPreferencesEditor.apply()
     }
 }

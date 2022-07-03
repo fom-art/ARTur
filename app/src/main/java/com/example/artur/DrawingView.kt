@@ -3,27 +3,26 @@ package com.example.artur
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import kotlin.properties.Delegates
 
+
 class DrawingView(context: Context, attributes: AttributeSet) : View(context, attributes) {
 
     // An inner class for custom path with two params as color and stroke size.
-    internal inner class CustomPath(var color: Int, var brushThickness: Float) : Path()
 
-    private var drawPath: CustomPath? = null
+    private var drawPath: Path? = null
     private var canvasBitmap: Bitmap? = null
-    private var viewBitmap: Bitmap? = null
     private var drawPaint: Paint? = null
     private var canvasPaint: Paint? = null
     private var brushSize by Delegates.notNull<Float>()     //lateinit Float variable
     private var brushColor by Delegates.notNull<Int>()    //lateinit Int variable
     private var canvas: Canvas? = null    //Canvas class holds the draw calls to write the bitmap
-    private val pathsList = ArrayList<CustomPath>()
-    private val undoPathsList = ArrayList<CustomPath>()
+
     private val actionList = ArrayList<Bitmap>()
 
     init {
@@ -36,7 +35,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
         setupBasicBrush()
 
         //Set up paths storage
-        drawPath = CustomPath(brushColor, brushSize)
+        drawPath = Path()
 
         //Set up everything needed for Paint class
         setUpPaintClassVariables()
@@ -60,7 +59,6 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
     ) {
         super.onSizeChanged(currentWidth, currentHeight, oldWidth, oldHeight)
         canvasBitmap = Bitmap.createBitmap(currentWidth, currentHeight, Bitmap.Config.ARGB_8888)
-        viewBitmap = Bitmap.createBitmap(currentWidth, currentHeight, Bitmap.Config.ARGB_8888)
         canvas = Canvas(canvasBitmap!!)
     }
 
@@ -69,7 +67,6 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
         super.onDraw(canvas)
 
         canvas.drawBitmap(canvasBitmap!!, 0f, 0f, null)
-        canvas.drawBitmap(viewBitmap!!, 0f, 0f, null)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -86,8 +83,8 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
                 invalidate()
             }
             MotionEvent.ACTION_UP -> {
-                actionList.add(viewBitmap!!)
-                drawPath = CustomPath(brushColor, brushSize)
+                drawPath = Path()
+                addLastAction(getBitmap())
             }
             else -> return false
         }
@@ -96,9 +93,33 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
         return true
     }
 
+    private fun addLastAction(bitmap: Bitmap) {
+        actionList.add(bitmap)
+    }
+
+    private fun getBitmap(): Bitmap {
+        val returnedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(returnedBitmap)
+        val bgDrawable: Drawable = background
+        bgDrawable.draw(canvas)
+        draw(canvas)
+
+        return returnedBitmap
+    }
+
     fun undoOneAction() {
         if (actionList.size > 0) {
+            actionList.removeAt(actionList.size - 1)
 
+            canvasBitmap = if (actionList.size > 0) {
+                actionList[actionList.size - 1]
+            } else {
+                Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            }
+
+            canvas = Canvas(canvasBitmap!!)
+
+            invalidate()
         }
     }
 

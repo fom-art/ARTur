@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val basicColorImageButton = binding.llPaintColors[0] as ImageButton
 
         //Make a selection of the basic color
-        changeClickedPaintBorder(basicColorImageButton)
+        setColorButtonClicked(basicColorImageButton)
 
         currentColorImageButtonSelected = basicColorImageButton
     }
@@ -89,18 +89,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (view !== currentColorImageButtonSelected) {
             val imageButton = view as ImageButton
 
-            currentColorImageButtonSelected = if (imageButton.tag.toString() != Constants.ERASER){
-                setBrushColor(imageButton)
+            setColorButtonUnClicked(currentColorImageButtonSelected as ImageButton)
 
-                setColorButtonClicked(imageButton)
-
-                view
-            } else {
+            currentColorImageButtonSelected = if (imageButton.tag.toString() == Constants.ERASER) {
                 binding.drawingView.activateEraser()
                 setColorButtonClicked(imageButton)
-                setColorButtonClicked(currentColorImageButtonSelected!!)
 
-                view
+                imageButton
+            } else {
+                binding.drawingView.disableEraser()
+                setColorButtonClicked(imageButton)
+                setBrushColor(imageButton)
+
+                imageButton
             }
         }
     }

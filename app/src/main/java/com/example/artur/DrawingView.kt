@@ -25,8 +25,6 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
     private val pathsList = ArrayList<CustomPath>()
     private val undoPathsList = ArrayList<CustomPath>()
     private val actionList = ArrayList<Bitmap>()
-    private var currentX by Delegates.notNull<Float>()
-    private var currentY by Delegates.notNull<Float>()
 
     init {
         setUpDrawingView()
@@ -88,7 +86,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
                 invalidate()
             }
             MotionEvent.ACTION_UP -> {
-                pathsList.add(drawPath!!)
+                actionList.add(viewBitmap!!)
                 drawPath = CustomPath(brushColor, brushSize)
             }
             else -> return false
@@ -100,23 +98,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
 
     fun undoOneAction() {
         if (actionList.size > 0) {
-            actionList.removeAt(actionList.size - 1)
-            if (actionList.size > 0) {
-                viewBitmap = actionList.get(actionList.size - 1)
-            } else {
-                viewBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            }
 
-            canvas = Canvas(viewBitmap!!)
-
-            invalidate()
-        }
-    }
-
-    fun undoOneStep() {
-        if (pathsList.size > 0) {
-            undoPathsList.add(pathsList.removeAt(pathsList.size - 1))
-            invalidate()    //Used to notify the ViewModel, that the data (paths) has changed
         }
     }
 
@@ -128,19 +110,21 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
         drawPaint!!.strokeWidth = brushSize
     }
 
+    fun activateEraser() {
+        drawPaint!!.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+    }
+
+    fun disableEraser() {
+        drawPaint!!.xfermode = null
+    }
+
     fun setBrushColor(newColor: String) {
         brushColor = Color.parseColor(newColor)
         drawPaint!!.color = brushColor
     }
 
     private fun beginTheLine(cordX: Float, cordY: Float) {
-//        drawPath!!.color = brushColor
-//        drawPath!!.brushThickness = brushSize
-//
-//        drawPath!!.reset()    //Clear a previous path from the path variable
         drawPath!!.moveTo(cordX, cordY)    //Set the beginning of the upcoming line
-        currentX = cordX
-        currentY = cordY
     }
 
     //Adds a line to the specified point

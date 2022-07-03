@@ -14,6 +14,7 @@ import com.example.artur.R
 import com.example.artur.databinding.ActivityMainBinding
 import com.example.artur.dialogs.BrushDialog
 import com.example.artur.utils.BitmapFromGalleryGetter
+import com.example.artur.utils.BitmapSaver
 import com.example.artur.utils.Constants
 import com.example.artur.utils.Permissions
 
@@ -71,7 +72,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun saveBitmapToStorage() {
         if (Permissions(this, this).checkPermissions()) {
-            //TODO
+            val bitmapSaver = BitmapSaver(binding.drawingView, this)
+            bitmapSaver.savePhotoToStorage()
+
+            bitmapSaver.sendToast()
         }
     }
 

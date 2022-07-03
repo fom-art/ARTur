@@ -58,7 +58,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
         oldHeight: Int
     ) {
         super.onSizeChanged(currentWidth, currentHeight, oldWidth, oldHeight)
-        canvasBitmap = Bitmap.createBitmap(currentWidth, currentHeight, Bitmap.Config.ARGB_8888)
+        canvasBitmap = createNewBitmap()
         canvas = Canvas(canvasBitmap!!)
     }
 
@@ -97,8 +97,16 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
         actionList.add(bitmap)
     }
 
+    fun returnCurrentBitmap(): Bitmap {
+        if (actionList.size > 0) {
+            return actionList[actionList.size - 1]
+        } else {
+            return createNewBitmap()
+        }
+    }
+
     private fun getBitmap(): Bitmap {
-        val returnedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val returnedBitmap = createNewBitmap()
         val canvas = Canvas(returnedBitmap)
         val bgDrawable: Drawable = background
         bgDrawable.draw(canvas)
@@ -114,7 +122,7 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
             canvasBitmap = if (actionList.size > 0) {
                 actionList[actionList.size - 1]
             } else {
-                Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                createNewBitmap()
             }
 
             canvas = Canvas(canvasBitmap!!)
@@ -157,5 +165,9 @@ class DrawingView(context: Context, attributes: AttributeSet) : View(context, at
     private fun setupBasicBrush() {
         brushColor = Color.BLACK
         setSizeForBrush(20.toFloat())
+    }
+
+    private fun createNewBitmap(): Bitmap {
+        return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     }
 }
